@@ -12,17 +12,16 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Fscan(reader, &T)
 	for t := 1; t <= T; t++ {
-		var n int
+		var n, curr int
 		fmt.Fscan(reader, &n)
-		a := make([]int, n)
 		odds := 0
 		misplaced := 0
 		for i := 0; i < n; i++ {
-			fmt.Fscan(reader, &a[i])
-			if a[i]%2 == 1 {
+			fmt.Fscan(reader, &curr)
+			if curr%2 == 1 {
 				odds++
 			}
-			if i%2 == 1 && a[i]%2 == 0 {
+			if i%2 == 1 && curr%2 == 0 {
 				misplaced++
 			}
 		}
