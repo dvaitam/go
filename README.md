@@ -1,1 +1,1 @@
-# Go solutions
+# Codeforces Go solutions
