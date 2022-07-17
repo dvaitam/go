@@ -24,6 +24,19 @@ func bisect_right(a []int64, x int64) int {
 	}
 	return lo
 }
+func bisect_left(a []int64, x int64) int {
+	lo := 0
+	hi := len(a)
+	for lo < hi {
+		mid := (lo + hi) / 2
+		if a[mid] < x {
+			lo = mid + 1
+		} else {
+			hi = mid
+		}
+	}
+	return lo
+}
 
 func main() {
 	var T int
