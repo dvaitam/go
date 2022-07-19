@@ -21,8 +21,12 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Fscan(reader, &n)
 	a := make([]int, n)
+	zeros := 0
 	for i := 0; i < n; i++ {
 		fmt.Fscan(reader, &a[i])
+		if a[i] == 0 {
+			zeros++
+		}
 	}
 	cost := int64(0)
 	for i := 0; i < n; i++ {
@@ -39,7 +43,7 @@ func main() {
 		product *= a[i]
 	}
 	if product == 0 {
-		cost++
+		cost += int64(zeros)
 	} else if product == -1 {
 		cost += 2
 	}
