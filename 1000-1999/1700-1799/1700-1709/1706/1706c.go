@@ -13,7 +13,7 @@ func max(a int, b int) int {
 	}
 	return b
 }
-func min(a int, b int) int {
+func min(a int64, b int64) int64 {
 	if a < b {
 		return a
 	}
@@ -31,25 +31,36 @@ func main() {
 		for i := 0; i < n; i++ {
 			fmt.Fscan(reader, &h[i])
 		}
-		ans := 0
+		ans := int64(0)
 		for i := 1; i < n-1; i += 2 {
 			mx := max(h[i-1], h[i+1])
 			if mx >= h[i] {
-				ans += (mx - h[i] + 1)
+				ans += int64((mx - h[i] + 1))
 			}
 		}
 		if n%2 == 1 {
 			fmt.Println(ans)
 		} else {
-			ans1 := 0
-			for i := 2; i < n-1; i += 2 {
+			cool := make([]int, n)
+			for i := 1; i < n-1; i++ {
 				mx := max(h[i-1], h[i+1])
 				if mx >= h[i] {
-					ans1 += (mx - h[i] + 1)
+					cool[i] = (mx - h[i] + 1)
 				}
 			}
-			fmt.Println(min(ans1, ans))
-
+			// fmt.Println(cool)
+			ans1 := int64(0)
+			for i := 1; i < n-1; i += 2 {
+				ans1 += int64(cool[i])
+			}
+			ans := ans1
+			//fmt.Println("starting is ", ans1)
+			for i := n - 3; i > 0; i -= 2 {
+				ans1 += int64(cool[i+1] - cool[i])
+				ans = min(ans, ans1)
+				// fmt.Println("is ", i, ans1)
+			}
+			fmt.Println(ans)
 		}
 
 	}
