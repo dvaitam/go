@@ -5,31 +5,36 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func main() {
 	var T int
 	reader := bufio.NewReader(os.Stdin)
+	f := bufio.NewWriter(os.Stdout)
+	defer f.Flush()
 	fmt.Fscan(reader, &T)
 	for t := 1; t <= T; t++ {
 		var n int
 		fmt.Fscan(reader, &n)
-		fmt.Println(n)
+		f.Write([]byte(strconv.Itoa(n)))
+		f.Write([]byte("\n"))
 		for i := 1; i <= n; i++ {
-			fmt.Fprint(os.Stdout, i)
+			f.Write([]byte(strconv.Itoa(i)))
 			if i != n {
-				fmt.Fprint(os.Stdout, " ")
+				f.Write([]byte(" "))
 			}
 		}
-		fmt.Fprint(os.Stdout, "\n")
+		f.Write([]byte("\n"))
 		for k := n - 1; k >= 1; k-- {
 			for i := 1; i <= n; i++ {
 				if i != k {
-					fmt.Fprint(os.Stdout, i)
-					fmt.Fprint(os.Stdout, " ")
+					f.Write([]byte(strconv.Itoa(i)))
+					f.Write([]byte(" "))
 				}
 			}
-			fmt.Fprintln(os.Stdout, k)
+			f.Write([]byte(strconv.Itoa(k)))
+			f.Write([]byte("\n"))
 		}
 	}
 }
