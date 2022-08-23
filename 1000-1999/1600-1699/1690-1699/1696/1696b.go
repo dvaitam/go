@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -26,38 +25,31 @@ func main() {
 		var n int
 		fmt.Fscan(reader, &n)
 		a := make([]int, n)
-		s := 0
+		non_zero := false
+		zero_after_non_zero := false
+		more := false
 		for i := 0; i < n; i++ {
 			fmt.Fscan(reader, &a[i])
-			s += a[i]
+			if zero_after_non_zero && a[i] != 0 {
+				more = true
+			}
+
+			if non_zero && a[i] == 0 {
+				zero_after_non_zero = true
+			}
+			if a[i] != 0 {
+				non_zero = true
+			}
 		}
-		if s == 0 {
-			write_string(f, "NO\n")
+		if more {
+			fmt.Println(2)
 		} else {
-			sort.Ints(a)
-			ok := true
-			s := 0
-			for i := 0; i < n; i++ {
-				s += a[i]
-				if s == 0 {
-					ok = false
-					break
-				}
-			}
-			if !ok {
-				for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
-					a[i], a[j] = a[j], a[i]
-				}
-			}
-			write_string(f, "YES\n")
-			for i := 0; i < n; i++ {
-				write_int(f, a[i])
-				if i == n-1 {
-					write_string(f, "\n")
-				} else {
-					write_string(f, " ")
-				}
+			if non_zero {
+				fmt.Println(1)
+			} else {
+				fmt.Println(0)
 			}
 		}
+
 	}
 }
