@@ -16,12 +16,20 @@ func write_string(f *bufio.Writer, a string) {
 }
 
 func main() {
-	var T int
+	var n, v int
 	reader := bufio.NewReader(os.Stdin)
 	f := bufio.NewWriter(os.Stdout)
 	defer f.Flush()
-	fmt.Fscan(reader, &T)
-	for t := 1; t <= T; t++ {
-
+	fmt.Fscan(reader, &n, &v)
+	ans := 0
+	if v >= n-1 {
+		ans = n - 1
+	} else {
+		ans = v
+		l := n - 1 - v
+		ans += ((l + 1) * (l + 2)) / 2
+		ans--
 	}
+	fmt.Println(ans)
+
 }
