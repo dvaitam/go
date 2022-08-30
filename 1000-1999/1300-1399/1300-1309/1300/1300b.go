@@ -41,14 +41,8 @@ func main() {
 			fmt.Fscan(reader, &a[i])
 		}
 		sort.Ints(a)
-		ans := 1000000000
-		for i := 0; i < 2*n; i++ {
-			if i < n {
-				ans = min(ans, abs(a[i]-a[n]))
-			} else {
-				ans = min(ans, abs(a[i]-a[n-1]))
-			}
-		}
-		fmt.Println(ans)
+
+		write_int(f, a[n]-a[n-1])
+		write_string(f, "\n")
 	}
 }
