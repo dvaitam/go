@@ -13,7 +13,7 @@ func main() {
 	fmt.Println(os.Args[2])
 	s := os.Args[2]
 	// letter := s[len(s)-1:]
-	n, _ := strconv.Atoi(s[:len(s)-1])
+	n, _ := strconv.Atoi(s)
 	sn := n
 	thousands := (n / 1000) * 1000
 	t_dir := fmt.Sprintf("%d-%d", thousands, thousands+999)
@@ -29,14 +29,11 @@ func main() {
 	newpath := filepath.Join(".", path)
 	err := os.MkdirAll(newpath, os.ModePerm)
 	fmt.Println(err)
-	final_path := "./" + path + "/" + s + ".go"
+	final_path := "./" + path + "/" + s + os.Args[3] + ".go"
 	fmt.Println(final_path)
 	//os.OpenFile(final_path, os.O_RDONLY|os.O_CREATE, 0666)
-	if os.Args[3] == "mv" {
-		Copy(s+".go", final_path, "mv")
-	} else {
-		Copy("template.go", final_path, os.Args[3])
-	}
+
+	Copy("template.go", final_path, os.Args[3])
 
 }
 func Copy(src, dst, cmd string) error {
