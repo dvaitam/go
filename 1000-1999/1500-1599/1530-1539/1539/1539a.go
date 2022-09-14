@@ -21,7 +21,16 @@ func main() {
 	f := bufio.NewWriter(os.Stdout)
 	defer f.Flush()
 	fmt.Fscan(reader, &T)
-	for t := 1; t <= T; t++ {
-
+	for k := 1; k <= T; k++ {
+		var n, x, t, ans int64
+		fmt.Fscan(reader, &n, &x, &t)
+		d := t / x
+		if n > d {
+			ans = (d*(d+1))/2 + (n-d-1)*d
+		} else {
+			ans = ((n - 1) * n) / 2
+		}
+		write(f, ans)
+		write(f, "\n")
 	}
 }
