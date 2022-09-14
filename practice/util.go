@@ -24,6 +24,14 @@ func min[K Number](a K, b K) K {
 	}
 	return b
 }
+
+type Anything interface {
+	int64 | float64 | int | string | float32
+}
+
+func write[K Anything](f *bufio.Writer, a K) {
+	f.Write([]byte(fmt.Sprint(a)))
+}
 func max[K Number](a K, b K) K {
 	if a > b {
 		return a
