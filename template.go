@@ -7,12 +7,8 @@ import (
 	"os"
 )
 
-type Anything interface {
-	int64 | float64 | int | string | float32
-}
-
-func write[K Anything](f *bufio.Writer, a K) {
-	f.Write([]byte(fmt.Sprint(a)))
+func write(f *bufio.Writer, a ...interface{}) {
+	f.Write([]byte(fmt.Sprint(a...)))
 }
 
 func main() {

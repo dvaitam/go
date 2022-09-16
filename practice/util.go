@@ -4,6 +4,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os"
 	"strconv"
 )
 
@@ -25,12 +26,8 @@ func min[K Number](a K, b K) K {
 	return b
 }
 
-type Anything interface {
-	int64 | float64 | int | string | float32
-}
-
-func write[K Anything](f *bufio.Writer, a K) {
-	f.Write([]byte(fmt.Sprint(a)))
+func write(f *bufio.Writer, a ...interface{}) {
+	f.Write([]byte(fmt.Sprint(a...)))
 }
 func max[K Number](a K, b K) K {
 	if a > b {
@@ -39,5 +36,7 @@ func max[K Number](a K, b K) K {
 	return b
 }
 func main() {
-	fmt.Println(min(4, 5))
+	f := bufio.NewWriter(os.Stdout)
+	defer f.Flush()
+	write(f, 3, 4, 6, "\n")
 }

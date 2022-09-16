@@ -8,12 +8,8 @@ import (
 	"sort"
 )
 
-type Anything interface {
-	int64 | float64 | int | string | float32
-}
-
-func write[K Anything](f *bufio.Writer, a K) {
-	f.Write([]byte(fmt.Sprint(a)))
+func write(f *bufio.Writer, a ...interface{}) {
+	f.Write([]byte(fmt.Sprint(a...)))
 }
 
 func main() {
@@ -51,11 +47,9 @@ func main() {
 			start := 1
 			for _, kk := range keys {
 				v := m[kk]
-				write(f, start+v-1)
-				write(f, " ")
+				write(f, start+v-1, " ")
 				for k := start; k < start+v-1; k++ {
-					write(f, k)
-					write(f, " ")
+					write(f, k, " ")
 				}
 				start += v
 			}
@@ -63,8 +57,7 @@ func main() {
 			write(f, "\n")
 
 		} else {
-			write(f, -1)
-			write(f, "\n")
+			write(f, -1, "\n")
 		}
 	}
 }
