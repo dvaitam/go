@@ -8,6 +8,9 @@ import (
 	"strconv"
 )
 
+func write(f *bufio.Writer, a ...interface{}) {
+	f.Write([]byte(fmt.Sprint(a...)))
+}
 func main() {
 	var T int
 	reader := bufio.NewReader(os.Stdin)
@@ -17,24 +20,23 @@ func main() {
 	for t := 1; t <= T; t++ {
 		var n int
 		fmt.Fscan(reader, &n)
-		f.Write([]byte(strconv.Itoa(n)))
-		f.Write([]byte("\n"))
+		write(f, n, "\n")
+
 		for i := 1; i <= n; i++ {
 			f.Write([]byte(strconv.Itoa(i)))
-			if i != n {
-				f.Write([]byte(" "))
+			if i == n {
+				write(f, "\n")
+			} else {
+				write(f, " ")
 			}
 		}
-		f.Write([]byte("\n"))
 		for k := n - 1; k >= 1; k-- {
 			for i := 1; i <= n; i++ {
 				if i != k {
-					f.Write([]byte(strconv.Itoa(i)))
-					f.Write([]byte(" "))
+					write(f, i, " ")
 				}
 			}
-			f.Write([]byte(strconv.Itoa(k)))
-			f.Write([]byte("\n"))
+			write(f, k, "\n")
 		}
 	}
 }
