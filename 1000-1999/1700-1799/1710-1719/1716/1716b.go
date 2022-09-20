@@ -5,9 +5,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 )
 
+// not exact
 func write(f *bufio.Writer, a ...interface{}) {
 	f.Write([]byte(fmt.Sprint(a...)))
 }
@@ -23,7 +23,7 @@ func main() {
 		write(f, n, "\n")
 
 		for i := 1; i <= n; i++ {
-			f.Write([]byte(strconv.Itoa(i)))
+			write(f, i)
 			if i == n {
 				write(f, "\n")
 			} else {
