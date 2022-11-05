@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"sort"
 )
 
 func write(f *bufio.Writer, a ...interface{}) {
@@ -38,42 +37,67 @@ func main() {
 		var n int
 		fmt.Fscan(reader, &n)
 		b := make([]int, n+2)
+		high := 0
+		shigh := 0
+		ps := 0
+
 		for i := 0; i < n+2; i++ {
 			fmt.Fscan(reader, &b[i])
-		}
-		sort.Ints(b)
-		ps := 0
-		for i := 0; i < n; i++ {
+			if b[i] <= high && b[i] > shigh {
+				shigh = b[i]
+			} else if b[i] > high {
+				shigh = high
+				high = b[i]
+			}
 			ps += b[i]
 		}
-		if ps == b[n] || ps == b[n+1] {
-			for i := 0; i < n; i++ {
-				write(f, b[i])
-				if i == n-1 {
-					write(f, "\n")
-				} else {
-					write(f, " ")
+		// sort.Ints(b)
+
+		ps -= (high + shigh)
+		if ps == high || ps == shigh {
+			skip_high := true
+			ship_shigh := true
+			for i := 0; i < n+2; i++ {
+				if skip_high {
+					if b[i] == high {
+						skip_high = false
+						continue
+					}
 				}
+				if ship_shigh {
+					if b[i] == shigh {
+						ship_shigh = false
+						continue
+					}
+				}
+				write(f, b[i], " ")
 			}
+			write(f, "\n")
 		} else {
-			rem := ps - (b[n+1] - b[n])
+			rem := ps - (high - shigh)
 			ok := false
 			skip := -1
-			for i := 0; i < n; i++ {
-				if b[i] == rem {
+			for i := 0; i < n+2; i++ {
+				if b[i] == rem && b[i] != shigh && b[i] != high {
 					ok = true
 					skip = i
 					break
 				}
 			}
 			if ok {
-				for i := 0; i < n; i++ {
-					if i == skip {
-						continue
+				skip_high := true
+				for i := 0; i < n+2; i++ {
+					if i == skip || b[i] == high {
+						if i == skip {
+							continue
+						} else if skip_high {
+							skip_high = false
+							continue
+						}
 					}
 					write(f, b[i], " ")
 				}
-				write(f, b[n], "\n")
+				write(f, "\n")
 			} else {
 				write(f, "-1\n")
 			}
