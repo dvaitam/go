@@ -40,7 +40,7 @@ func main() {
 		m[a[i]]++
 	}
 	ans := 1
-	for k, _ := range m {
+	for k := range m {
 		tmp := 0
 		for j := k; j <= k+5; j++ {
 			tmp += m[j]
