@@ -49,6 +49,7 @@ func main() {
 			}
 		}
 		if a[0] > mi {
+			// fix
 			write(f, "Alice\n")
 		} else {
 			write(f, "Bob\n")
