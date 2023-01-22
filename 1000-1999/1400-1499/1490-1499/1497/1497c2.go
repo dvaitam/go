@@ -27,22 +27,6 @@ func max[K Number](a K, b K) K {
 	}
 	return b
 }
-func solve3(n int) []int {
-	if n%3 == 0 {
-		return []int{n / 3, n / 3, n / 3}
-	} else {
-		if n%2 == 1 {
-			return []int{(n - 1) / 2, (n - 1) / 2, 1}
-		} else {
-			if n%4 == 0 {
-				return []int{n / 2, n / 4, n / 4}
-
-			} else {
-				return []int{2, (n - 2) / 2, (n - 2) / 2}
-			}
-		}
-	}
-}
 func solve(n int, k int, factor int) []int {
 	if n/k == 1 {
 		ans := make([]int, k)
@@ -54,12 +38,6 @@ func solve(n int, k int, factor int) []int {
 			} else {
 				ans[i] = 1 * factor
 			}
-		}
-		return ans
-	} else if k == 3 {
-		ans := solve3(n)
-		for i := 0; i < k; i++ {
-			ans[i] = ans[i] * factor
 		}
 		return ans
 	} else if n%k == 0 {
@@ -92,14 +70,5 @@ func main() {
 			write(f, ans[i], " ")
 		}
 		write(f, "\n")
-		// total := n
-		// for i := k; i > 0; i-- {
-		// 	curr := ff
-		// 	for (i-1)*curr < total {
-		// 		curr = curr / 2
-		// 	}
-		// 	total -= curr
-		// 	write(f, curr, " ")
-		// }
 	}
 }
