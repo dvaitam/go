@@ -60,12 +60,17 @@ func main() {
 	for i := 0; i < n; i++ {
 		fmt.Fscan(reader, &a[i])
 	}
-	ans := 1
-	for i := 0; i < n; i++ {
-		for j := i + 1; j < n; j++ {
-			ans *= abs(a[i] - a[j])
-			ans = ans % m
+	if n > m {
+		write(f, "0\n")
+	} else {
+		ans := 1
+		for i := 0; i < n; i++ {
+			for j := i + 1; j < n; j++ {
+				ans *= abs(a[i] - a[j])
+				ans = ans % m
+			}
 		}
+		write(f, ans, "\n")
 	}
-	write(f, ans, "\n")
+
 }
