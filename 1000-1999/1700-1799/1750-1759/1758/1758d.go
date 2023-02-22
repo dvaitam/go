@@ -40,13 +40,10 @@ func main() {
 		ans = append(ans, 3*n)
 		ans = append(ans, 5*n)
 		rem := 16*n*n - 8*n
-		left, right := int64(0), int64(0)
+		left, right := 4*n-1, 4*n+1
 		if n%2 == 1 {
 			ans = append(ans, 4*n)
 			rem -= 4 * n
-			left, right = 4*n-1, 4*n+1
-		} else {
-			left, right = 4*n-1, 4*n+1
 		}
 		for rem > 0 {
 			ans = append(ans, left)
