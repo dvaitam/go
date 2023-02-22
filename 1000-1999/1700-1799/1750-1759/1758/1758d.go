@@ -4,7 +4,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
 )
 
@@ -37,30 +36,32 @@ func main() {
 	for t := 1; t <= T; t++ {
 		var n int64
 		fmt.Fscan(reader, &n)
-		for i := int64(1); i < 100; i++ {
-			first_n_sum := n*i + ((n)*(n-1))/2
-			sq := math.Sqrt(float64(first_n_sum))
-			mx := int64(sq) + 1
-			if i+n-1 <= mx {
-				ans := make([]int64, 0)
-				for j := int64(0); j < n-1; j++ {
-					ans = append(ans, i+j)
-				}
-				ans = append(ans, i+mx)
-				excess := mx*mx - first_n_sum
-				start := n - 2
-				for excess > 0 && start >= 0 {
-					ans[start] += 1
-					excess--
-				}
-				for j := int64(0); j < n-1; j++ {
-					write(f, ans[j], " ")
-				}
-				write(f, ans[n-1], "\n")
-				break
-
+		ans := make([]int64, 0)
+		ans = append(ans, 3*n)
+		ans = append(ans, 5*n)
+		rem := 16*n*n - 8*n
+		left, right := int64(0), int64(0)
+		if n%2 == 1 {
+			ans = append(ans, 4*n)
+			rem -= 4 * n
+			left, right = 4*n-1, 4*n+1
+		} else {
+			left, right = 4*n-1, 4*n+1
+		}
+		for rem > 0 {
+			ans = append(ans, left)
+			ans = append(ans, right)
+			rem -= (left + right)
+			left--
+			right++
+		}
+		for i := int64(0); i < n; i++ {
+			write(f, ans[i])
+			if i == n-1 {
+				write(f, "\n")
+			} else {
+				write(f, " ")
 			}
-
 		}
 
 	}
