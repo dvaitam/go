@@ -59,6 +59,43 @@ func partition(a []int, lo int, hi int) int {
 	swaps++
 	return i
 }
+func inverts(a []int) int {
+	ans := 0
+	for i := 0; i < len(a); i++ {
+		for j := i + 1; j < len(a); j++ {
+			if a[i] > a[j] {
+				ans++
+			}
+		}
+	}
+	return ans
+}
+
+var steps int
+var zero_steps int
+
+func backtrack(a []int, count int) {
+	inc := inverts(a)
+	if inc <= 1 {
+		if inc == 0 {
+			zero_steps = min(zero_steps, count)
+		}
+		if inc == 1 {
+
+			steps = min(steps, count)
+		}
+		return
+	}
+	for i := 0; i < len(a); i++ {
+		if a[i] != i+1 {
+			si, sj := i, a[i]-1
+			a[si], a[sj] = a[sj], a[si]
+			backtrack(a, count+1)
+			a[si], a[sj] = a[sj], a[si]
+		}
+	}
+
+}
 func main() {
 	var T int
 	reader := bufio.NewReader(os.Stdin)
@@ -70,96 +107,15 @@ func main() {
 		var n int
 		fmt.Fscan(reader, &n)
 		p := make([]int, n)
-		ans := 0
 		m := map[int]int{}
 		for i := 0; i < n; i++ {
 			fmt.Fscan(reader, &p[i])
 			m[p[i]] = i + 1
 		}
-		quicksort(p, 0, n-1)
-		write(f, swaps, p, "\n")
-		// if t == 219 && first_answer == 114 {
-		// 	fmt.Println(p)
-		// }
-		adjacent := false
-		for i := 0; i < n; i++ {
-			if p[i] == i+1 {
-				continue
-			} else {
-				if !adjacent && i+1 < n {
-					if p[i] == i+2 && p[i+1] == i+1 {
-						adjacent = true
-						i++
-					} else if p[i] == i+2 {
-						if p[i+1] != i+1 {
-							si, sj := i+1, m[i+1]-1
-							p[si], p[sj] = p[sj], p[si]
-							m[p[si]] = si + 1
-							m[p[sj]] = sj + 1
-							ans++
-
-						}
-						adjacent = true
-						i += 1
-					} else if p[i+1] == i+1 {
-						if p[i] != i+2 {
-							si, sj := i, m[i+2]-1
-							p[si], p[sj] = p[sj], p[si]
-							m[p[si]] = si + 1
-							m[p[sj]] = sj + 1
-							ans++
-						}
-						adjacent = true
-						i += 1
-
-					} else if m[i+2] == p[i] && m[i+1] == p[i+1] {
-						if p[i] != i+2 {
-							si, sj := i, m[i+2]-1
-							p[si], p[sj] = p[sj], p[si]
-							m[p[si]] = si + 1
-							m[p[sj]] = sj + 1
-							ans++
-						}
-						if p[i+1] != i+1 {
-							si, sj := i+1, m[i+1]-1
-							p[si], p[sj] = p[sj], p[si]
-							m[p[si]] = si + 1
-							m[p[sj]] = sj + 1
-							ans++
-
-						}
-						adjacent = true
-						i += 1
-					} else {
-						si, sj := i, m[i+1]-1
-
-						p[si], p[sj] = p[sj], p[si]
-						m[p[si]] = si + 1
-						m[p[sj]] = sj + 1
-						ans++
-					}
-
-				} else {
-					si, sj := i, m[i+1]-1
-
-					p[si], p[sj] = p[sj], p[si]
-					m[p[si]] = si + 1
-					m[p[sj]] = sj + 1
-					ans++
-				}
-
-			}
-			write(f, p, "\n")
-			//write(f, m, "\n")
-		}
-		if !adjacent {
-			ans++
-		}
-		// if t == 1 {
-		// 	first_answer = ans
-		// }
-
-		write(f, ans, "\n")
+		steps = n
+		zero_steps = n
+		backtrack(p, 0)
+		write(f, min(steps, zero_steps+1), "\n")
 
 	}
 }
