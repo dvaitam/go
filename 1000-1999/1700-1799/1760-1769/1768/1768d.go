@@ -72,25 +72,57 @@ func inverts(a []int) int {
 }
 
 var steps int
-var zero_steps int
 
-func backtrack(a []int, count int) {
-	inc := inverts(a)
-	if inc <= 1 {
-		if inc == 0 {
-			zero_steps = min(zero_steps, count)
-		}
-		if inc == 1 {
-
-			steps = min(steps, count)
-		}
+func backtrack(a []int, count int, wrong_positions map[int]bool) {
+	if count > steps {
 		return
 	}
-	for i := 0; i < len(a); i++ {
-		if a[i] != i+1 {
-			si, sj := i, a[i]-1
+	if len(wrong_positions) == 0 {
+		steps = min(steps, count+1)
+		return
+	}
+	if len(wrong_positions) == 2 {
+		keys := make([]int, 0)
+		for k := range wrong_positions {
+			keys = append(keys, k)
+		}
+		if abs(keys[0]-keys[1]) == 1 {
+			steps = min(steps, count)
+			return
+		}
+	}
+	for k := range wrong_positions {
+
+		si, sj := k, a[k]-1
+
+		delete(wrong_positions, si)
+
+		a[si], a[sj] = a[sj], a[si]
+
+		backtrack(a, count+1, wrong_positions)
+		wrong_positions[si] = true
+		a[si], a[sj] = a[sj], a[si]
+
+		if wrong_positions[sj-1] {
+			si, sj := k, a[k]-2
+
+			delete(wrong_positions, si)
+
 			a[si], a[sj] = a[sj], a[si]
-			backtrack(a, count+1)
+
+			backtrack(a, count+1, wrong_positions)
+			wrong_positions[si] = true
+			a[si], a[sj] = a[sj], a[si]
+		}
+		if wrong_positions[sj+1] {
+			si, sj := k, a[k]
+
+			delete(wrong_positions, si)
+
+			a[si], a[sj] = a[sj], a[si]
+
+			backtrack(a, count+1, wrong_positions)
+			wrong_positions[si] = true
 			a[si], a[sj] = a[sj], a[si]
 		}
 	}
@@ -108,14 +140,17 @@ func main() {
 		fmt.Fscan(reader, &n)
 		p := make([]int, n)
 		m := map[int]int{}
+		wrong_positions := map[int]bool{}
 		for i := 0; i < n; i++ {
 			fmt.Fscan(reader, &p[i])
 			m[p[i]] = i + 1
+			if p[i] != i+1 {
+				wrong_positions[i] = true
+			}
 		}
 		steps = n
-		zero_steps = n
-		backtrack(p, 0)
-		write(f, min(steps, zero_steps+1), "\n")
+		backtrack(p, 0, wrong_positions)
+		write(f, steps, "\n")
 
 	}
 }
