@@ -38,8 +38,6 @@ func reverse(ee []Edge) {
 }
 
 var ans []int64
-var mm map[int64]int
-var mmt map[int64]int64
 
 func backtrack(curr *list.List, adj map[int64][]Edge, t int64, T int64, n int64) {
 	if t > T {
@@ -49,14 +47,6 @@ func backtrack(curr *list.List, adj map[int64][]Edge, t int64, T int64, n int64)
 		return
 	}
 	last := curr.Back().Value.(int64)
-	if curr.Len() <= mm[last] && t > mmt[last] {
-		return
-	} else {
-		if curr.Len() >= mm[last] && t <= mmt[last] || mmt[last] == 0 {
-			mm[last] = curr.Len()
-			mmt[last] = t
-		}
-	}
 
 	if last == n {
 		if curr.Len() > len(ans) {
@@ -81,16 +71,53 @@ func main() {
 	defer f.Flush()
 	fmt.Fscan(reader, &n, &m, &T)
 	adj := map[int64][]Edge{}
-	mm = map[int64]int{}
-	mmt = map[int64]int64{}
+	adjm := map[int64]map[int64]int64{}
+	adjr := map[int64]map[int64]bool{}
+	out_degree := map[int64]int64{}
 	for i := int64(0); i < m; i++ {
 		var u, v, t int64
 		fmt.Fscan(reader, &u, &v, &t)
-		if adj[u] == nil {
-			adj[u] = make([]Edge, 0)
+		// if adj[u] == nil {
+		// 	adj[u] = make([]Edge, 0)
+		// }
+		if adjr[v] == nil {
+			adjr[v] = map[int64]bool{}
 		}
-		adj[u] = append(adj[u], Edge{v: v, t: t})
+		if adjm[u] == nil {
+			adjm[u] = map[int64]int64{}
+		}
+		adjr[v][u] = true
+		//	adj[u] = append(adj[u], Edge{v: v, t: t})
+		adjm[u][v] = t
+		out_degree[u]++
 	}
+	start := make([]int64, 0)
+	for i := int64(1); i <= n; i++ {
+		if out_degree[i] == 0 && adjr[i] != nil && i != 1 && i != n {
+			start = append(start, i)
+		}
+	}
+	for len(start) > 0 {
+		top := start[len(start)-1]
+		start = start[:len(start)-1]
+		if top == n {
+			continue
+		}
+		for k := range adjr[top] {
+			delete(adjm[k], top)
+			out_degree[k]--
+			if out_degree[k] == 0 {
+				start = append(start, k)
+			}
+		}
+	}
+	for k := range adjm {
+		adj[k] = make([]Edge, 0)
+		for k1, t1 := range adjm[k] {
+			adj[k] = append(adj[k], Edge{v: k1, t: t1})
+		}
+	}
+
 	// for k := range adj {
 	// 	reverse(adj[k])
 	// }
