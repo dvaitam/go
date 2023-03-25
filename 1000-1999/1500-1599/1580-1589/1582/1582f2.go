@@ -30,7 +30,7 @@ func max[K Number](a K, b K) K {
 
 var table [][]bool
 var upd [][]int
-var updl map[int]int
+var updl []int
 
 func setv(a int, b int) {
 	if !table[a][b] {
@@ -62,12 +62,11 @@ func main() {
 	}
 	table = make([][]bool, 5001)
 	upd = make([][]int, 5001)
-	updl = map[int]int{}
+	updl = make([]int, 8192)
 
 	for i := 0; i < 5001; i++ {
 		table[i] = make([]bool, 8192)
 		upd[i] = make([]int, 8192)
-		updl[i] = 0
 	}
 	for i := 0; i <= 5000; i++ {
 		setv(i, 0)
