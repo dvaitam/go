@@ -1,5 +1,7 @@
 // #include<iostream>
 // #include<vector>
+#pragma GCC Optmize("Ofast")
+#pragma GCC target("avx2")
 #include <bits/stdc++.h>
 using namespace std;
 vector<vector<bool> > table(5001, vector<bool>(8192, false));
@@ -21,6 +23,7 @@ void roll(int a) {
     }
 }
 int main() {
+    ios_base::sync_with_stdio(false);
     int n;
     cin>>n;
     vector<int> a(n);
