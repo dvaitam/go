@@ -29,27 +29,39 @@ func max[K Number](a K, b K) K {
 	return b
 }
 
-type IntHeap []int
+type Pair struct {
+	index, danger, vertex int
+}
+type PriorityQueue []*Pair
 
-func (h IntHeap) Len() int           { return len(h) }
-func (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }
-func (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (pq PriorityQueue) Len() int { return len(pq) }
 
-func (h *IntHeap) Push(x any) {
-	// Push and Pop use pointer receivers because they modify the slice's length,
-	// not just its contents.
-	//fmt.Println("before append", h)
-	*h = append(*h, x.(int))
-	//fmt.Println("after append", h)
+func (pq PriorityQueue) Less(i, j int) bool {
+	// We want Pop to give us the highest, not lowest, priority so we use greater than here.
+	return pq[i].danger < pq[j].danger
 }
 
-func (h *IntHeap) Pop() any {
-	old := *h
-	//fmt.Println("before pop", h)
+func (pq PriorityQueue) Swap(i, j int) {
+	pq[i], pq[j] = pq[j], pq[i]
+	pq[i].index = i
+	pq[j].index = j
+}
+
+func (pq *PriorityQueue) Push(x any) {
+	n := len(*pq)
+	item := x.(*Pair)
+	item.index = n
+	*pq = append(*pq, item)
+}
+
+func (pq *PriorityQueue) Pop() any {
+	old := *pq
 	n := len(old)
-	x := old[n-1]
-	*h = old[0 : n-1]
-	return x
+	item := old[n-1]
+	old[n-1] = nil  // avoid memory leak
+	item.index = -1 // for safety
+	*pq = old[0 : n-1]
+	return item
 }
 func main() {
 	var T int
@@ -69,7 +81,7 @@ func main() {
 			}
 		}
 		adj := map[int][]int{}
-		for i := 0; i < n; i++ {
+		for i := 0; i < m; i++ {
 			var u, v int
 			fmt.Fscan(reader, &u, &v)
 			if adj[u] == nil {
@@ -81,20 +93,47 @@ func main() {
 			adj[u] = append(adj[u], v)
 			adj[v] = append(adj[v], u)
 		}
-		//ok := false
+		ok := false
+		tried := map[int]bool{}
+		//write(f, possibles, "\n")
 		for i := 0; i < len(possibles); i++ {
-			h := &IntHeap{}
-			heap.Init(h)
+			if tried[possibles[i]] {
+				continue
+			}
+			pq := make(PriorityQueue, 0)
 			health := 0
-			heap.Push(h, possibles[i])
-			for h.Len() > 0 {
-				if health < a[(*h)[0]] {
+			heap.Push(&pq, &Pair{danger: 0, vertex: possibles[i]})
+			included := map[int]bool{}
+			included[possibles[i]] = true
+			for pq.Len() > 0 {
+				if health < pq[0].danger {
 					break
 				} else {
-					heap.Pop(h)
+					item := heap.Pop(&pq).(*Pair)
+					if item.danger == 0 {
+						tried[item.vertex] = true
+					}
+					for _, v := range adj[item.vertex] {
+						if !included[v] {
+							included[v] = true
+							heap.Push(&pq, &Pair{danger: a[v], vertex: v})
+						}
+					}
+
 					health++
 				}
 			}
+			if pq.Len() == 0 {
+				if len(included) == n {
+					ok = true
+				}
+				break
+			}
+		}
+		if ok {
+			write(f, "YES\n")
+		} else {
+			write(f, "NO\n")
 		}
 
 	}
