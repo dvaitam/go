@@ -170,15 +170,126 @@ func main() {
 	add_edges(rsegments, x0, x0+1, adj, adjm, y0)
 	add_edges(rsegments, x1, x1-1, adj, adjm, y1)
 	add_edges(rsegments, x1, x1+1, adj, adjm, y1)
-	pl := len(rsegments[x0])
-	j := sort.Search(pl, func(i int) bool {
-		return rsegments[x0][i].b >= y0
-	})
-	if y0 >= rsegments[x0][j].a {
-		rsegments[x0][j].points = append(rsegments[x0][j].points, y0)
+	for x := x0; x >= 0; x-- {
+		pl := len(rsegments[x])
+		j := sort.Search(pl, func(i int) bool {
+			return rsegments[x][i].b >= y0
+		})
+		if j < pl && y0 >= rsegments[x][j].a {
+			rsegments[x][j].points = append(rsegments[x][j].points, y0)
+			if x < x0 {
+				source, dest := x*mod+y0, (x+1)*mod+y0
+				if adj[source] == nil {
+					adj[source] = map[int64]int64{}
+				}
+				if adj[dest] == nil {
+					adj[dest] = map[int64]int64{}
+				}
+				if adj[source][dest] == 0 {
+					adj[source][dest] = 1
+					adjm[source] = append(adjm[source], dest)
+				}
+				if adj[dest][source] == 0 {
+					adj[dest][source] = 1
+					adjm[dest] = append(adjm[dest], source)
+				}
+
+			}
+		} else {
+			break
+		}
 	}
-	pl = len(rsegments[x1])
-	j = sort.Search(pl, func(i int) bool {
+	for x := x0; true; x++ {
+		pl := len(rsegments[x])
+		j := sort.Search(pl, func(i int) bool {
+			return rsegments[x][i].b >= y0
+		})
+		if j < pl && y0 >= rsegments[x][j].a {
+			rsegments[x][j].points = append(rsegments[x][j].points, y0)
+			if x > x0 {
+				source, dest := x*mod+y0, (x-1)*mod+y0
+				if adj[source] == nil {
+					adj[source] = map[int64]int64{}
+				}
+				if adj[dest] == nil {
+					adj[dest] = map[int64]int64{}
+				}
+				if adj[source][dest] == 0 {
+					adj[source][dest] = 1
+					adjm[source] = append(adjm[source], dest)
+				}
+				if adj[dest][source] == 0 {
+					adj[dest][source] = 1
+					adjm[dest] = append(adjm[dest], source)
+				}
+
+			}
+		} else {
+			break
+		}
+	}
+
+	for x := x1; x >= 0; x-- {
+		pl := len(rsegments[x])
+		j := sort.Search(pl, func(i int) bool {
+			return rsegments[x][i].b >= y1
+		})
+		if j < pl && y1 >= rsegments[x][j].a {
+			rsegments[x][j].points = append(rsegments[x][j].points, y1)
+			if x < x1 {
+				source, dest := x*mod+y1, (x+1)*mod+y1
+				if adj[source] == nil {
+					adj[source] = map[int64]int64{}
+				}
+				if adj[dest] == nil {
+					adj[dest] = map[int64]int64{}
+				}
+				if adj[source][dest] == 0 {
+					adj[source][dest] = 1
+					adjm[source] = append(adjm[source], dest)
+				}
+				if adj[dest][source] == 0 {
+					adj[dest][source] = 1
+					adjm[dest] = append(adjm[dest], source)
+				}
+
+			}
+		} else {
+			break
+		}
+	}
+	for x := x1; true; x++ {
+		pl := len(rsegments[x])
+		j := sort.Search(pl, func(i int) bool {
+			return rsegments[x][i].b >= y1
+		})
+		if j < pl && y1 >= rsegments[x][j].a {
+			rsegments[x][j].points = append(rsegments[x][j].points, y1)
+			if x > x1 {
+				source, dest := x*mod+y1, (x-1)*mod+y1
+				if adj[source] == nil {
+					adj[source] = map[int64]int64{}
+				}
+				if adj[dest] == nil {
+					adj[dest] = map[int64]int64{}
+				}
+				if adj[source][dest] == 0 {
+					adj[source][dest] = 1
+					adjm[source] = append(adjm[source], dest)
+				}
+				if adj[dest][source] == 0 {
+					adj[dest][source] = 1
+					adjm[dest] = append(adjm[dest], source)
+				}
+
+			}
+		} else {
+			break
+		}
+	}
+
+	pl := len(rsegments[x1])
+	j := sort.Search(pl, func(i int) bool {
 		return rsegments[x1][i].b >= y1
 	})
 	if y0 >= rsegments[x1][j].a {
