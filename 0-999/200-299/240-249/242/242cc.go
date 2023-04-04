@@ -34,6 +34,7 @@ type Item struct {
 	index    int
 	priority int64
 	vertex   int64
+	x, y     int64
 	on_queue bool
 }
 type PriorityQueue []*Item
@@ -126,203 +127,17 @@ func main() {
 	fmt.Fscan(reader, &x0, &y0, &x1, &y1)
 	var n int
 	fmt.Fscan(reader, &n)
-	segments := map[int64][]Segment{}
+	m := map[int64]bool{}
 	for i := 0; i < n; i++ {
 		var r, a, b int64
 		fmt.Fscan(reader, &r, &a, &b)
-		segments[r] = append(segments[r], Segment{a: a, b: b})
-	}
-	// segments[x0] = append(segments[x0], Segment{a: y0, b: y0})
-	// segments[x1] = append(segments[x1], Segment{a: y1, b: y1})
-
-	for k := range segments {
-		sort.Slice(segments[k], func(i, j int) bool { return segments[k][i].a < segments[k][j].a })
-	}
-	rsegments := map[int64][]Segment{}
-	for k := range segments {
-		new_segments := make([]Segment, 0)
-
-		for i := 0; i < len(segments[k]); i++ {
-			nl := len(new_segments)
-
-			if nl == 0 || segments[k][i].a > new_segments[nl-1].b {
-				new_segments = append(new_segments, segments[k][i])
-			} else {
-				new_segments[nl-1].b = max(segments[k][i].b, new_segments[nl-1].b)
-			}
-		}
-		rsegments[k] = new_segments
-	}
-
-	adj := map[int64]map[int64]int64{}
-	adjm := map[int64][]int64{}
-	for k, s := range rsegments {
-		for ri := 0; ri < len(s); ri++ {
-			s[ri].points = append(s[ri].points, s[ri].a)
-			add_edges(rsegments, k, k-1, adj, adjm, s[ri].a)
-			add_edges(rsegments, k, k+1, adj, adjm, s[ri].a)
-			s[ri].points = append(s[ri].points, s[ri].b)
-			add_edges(rsegments, k, k-1, adj, adjm, s[ri].b)
-			add_edges(rsegments, k, k+1, adj, adjm, s[ri].b)
-		}
-	}
-	add_edges(rsegments, x0, x0-1, adj, adjm, y0)
-	add_edges(rsegments, x0, x0+1, adj, adjm, y0)
-	add_edges(rsegments, x1, x1-1, adj, adjm, y1)
-	add_edges(rsegments, x1, x1+1, adj, adjm, y1)
-	for x := x0; x >= 0; x-- {
-		pl := len(rsegments[x])
-		j := sort.Search(pl, func(i int) bool {
-			return rsegments[x][i].b >= y0
-		})
-		if j < pl && y0 >= rsegments[x][j].a {
-			rsegments[x][j].points = append(rsegments[x][j].points, y0)
-			if x < x0 {
-				source, dest := x*mod+y0, (x+1)*mod+y0
-				if adj[source] == nil {
-					adj[source] = map[int64]int64{}
-				}
-				if adj[dest] == nil {
-					adj[dest] = map[int64]int64{}
-				}
-				if adj[source][dest] == 0 {
-					adj[source][dest] = 1
-					adjm[source] = append(adjm[source], dest)
-				}
-				if adj[dest][source] == 0 {
-					adj[dest][source] = 1
-					adjm[dest] = append(adjm[dest], source)
-				}
-
-			}
-		} else {
-			break
-		}
-	}
-	for x := x0; true; x++ {
-		pl := len(rsegments[x])
-		j := sort.Search(pl, func(i int) bool {
-			return rsegments[x][i].b >= y0
-		})
-		if j < pl && y0 >= rsegments[x][j].a {
-			rsegments[x][j].points = append(rsegments[x][j].points, y0)
-			if x > x0 {
-				source, dest := x*mod+y0, (x-1)*mod+y0
-				if adj[source] == nil {
-					adj[source] = map[int64]int64{}
-				}
-				if adj[dest] == nil {
-					adj[dest] = map[int64]int64{}
-				}
-				if adj[source][dest] == 0 {
-					adj[source][dest] = 1
-					adjm[source] = append(adjm[source], dest)
-				}
-				if adj[dest][source] == 0 {
-					adj[dest][source] = 1
-					adjm[dest] = append(adjm[dest], source)
-				}
-
-			}
-		} else {
-			break
-		}
-	}
-
-	for x := x1; x >= 0; x-- {
-		pl := len(rsegments[x])
-		j := sort.Search(pl, func(i int) bool {
-			return rsegments[x][i].b >= y1
-		})
-		if j < pl && y1 >= rsegments[x][j].a {
-			rsegments[x][j].points = append(rsegments[x][j].points, y1)
-			if x < x1 {
-				source, dest := x*mod+y1, (x+1)*mod+y1
-				if adj[source] == nil {
-					adj[source] = map[int64]int64{}
-				}
-				if adj[dest] == nil {
-					adj[dest] = map[int64]int64{}
-				}
-				if adj[source][dest] == 0 {
-					adj[source][dest] = 1
-					adjm[source] = append(adjm[source], dest)
-				}
-				if adj[dest][source] == 0 {
-					adj[dest][source] = 1
-					adjm[dest] = append(adjm[dest], source)
-				}
-
-			}
-		} else {
-			break
-		}
-	}
-	for x := x1; true; x++ {
-		pl := len(rsegments[x])
-		j := sort.Search(pl, func(i int) bool {
-			return rsegments[x][i].b >= y1
-		})
-		if j < pl && y1 >= rsegments[x][j].a {
-			rsegments[x][j].points = append(rsegments[x][j].points, y1)
-			if x > x1 {
-				source, dest := x*mod+y1, (x-1)*mod+y1
-				if adj[source] == nil {
-					adj[source] = map[int64]int64{}
-				}
-				if adj[dest] == nil {
-					adj[dest] = map[int64]int64{}
-				}
-				if adj[source][dest] == 0 {
-					adj[source][dest] = 1
-					adjm[source] = append(adjm[source], dest)
-				}
-				if adj[dest][source] == 0 {
-					adj[dest][source] = 1
-					adjm[dest] = append(adjm[dest], source)
-				}
-
-			}
-		} else {
-			break
-		}
-	}
-
-	pl := len(rsegments[x1])
-	j := sort.Search(pl, func(i int) bool {
-		return rsegments[x1][i].b >= y1
-	})
-	if y0 >= rsegments[x1][j].a {
-		rsegments[x1][j].points = append(rsegments[x1][j].points, y1)
-	}
-	for k, s := range rsegments {
-		for ri := 0; ri < len(s); ri++ {
-			sort.Slice(s[ri].points, func(i, j int) bool { return s[ri].points[i] < s[ri].points[j] })
-			points := s[ri].points
-			for i := 1; i < len(points); i++ {
-				if points[i] > points[i-1] {
-					source, dest := k*mod+points[i-1], (k)*mod+points[i]
-					if adj[source] == nil {
-						adj[source] = map[int64]int64{}
-					}
-					if adj[dest] == nil {
-						adj[dest] = map[int64]int64{}
-					}
-					if adj[source][dest] == 0 {
-						adj[source][dest] = points[i] - points[i-1]
-						adjm[source] = append(adjm[source], dest)
-					}
-					if adj[dest][source] == 0 {
-						adj[dest][source] = points[i] - points[i-1]
-						adjm[dest] = append(adjm[dest], source)
-					}
-				}
-			}
+		for y := a; y <= b; y++ {
+			m[r*mod+y] = true
 		}
 	}
 	dist := map[int64]*Item{}
-	for k := range adj {
-		dist[k] = &Item{vertex: k, priority: mod}
+	for k := range m {
+		dist[k] = &Item{vertex: k, priority: mod, x: k / mod, y: k % mod}
 	}
 	source := x0*mod + y0
 	dist[source].priority = 0
@@ -333,14 +148,20 @@ func main() {
 	for pq.Len() > 0 {
 		top := heap.Pop(&pq).(*Item)
 		top.on_queue = false
-		for v, d := range adj[top.vertex] {
-			if top.priority+d < dist[v].priority {
-				if dist[v].on_queue {
-					pq.update(dist[v], top.priority+d)
-				} else {
-					dist[v].on_queue = true
-					dist[v].priority = top.priority + d
-					heap.Push(&pq, dist[v])
+		for j := top.y - 1; j <= top.y+1; j++ {
+			for i := top.x - 1; i <= top.x+1; i++ {
+				dest := i*mod + j
+				if !m[dest] {
+					continue
+				}
+				if top.priority+1 < dist[dest].priority {
+					if dist[dest].on_queue {
+						pq.update(dist[dest], top.priority+1)
+					} else {
+						dist[dest].on_queue = true
+						dist[dest].priority = top.priority + 1
+						heap.Push(&pq, dist[dest])
+					}
 				}
 			}
 		}
