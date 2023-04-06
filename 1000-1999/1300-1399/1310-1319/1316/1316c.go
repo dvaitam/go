@@ -12,7 +12,7 @@ func write(f *bufio.Writer, a ...interface{}) {
 }
 
 type Number interface {
-	int64 | float64 | int | string
+	int64 | float64 | int
 }
 
 func min[K Number](a K, b K) K {
@@ -28,21 +28,25 @@ func max[K Number](a K, b K) K {
 	return b
 }
 func main() {
-	var T int
+	var n, m, p int
 	reader := bufio.NewReader(os.Stdin)
 	f := bufio.NewWriter(os.Stdout)
 	defer f.Flush()
-	fmt.Fscan(reader, &T)
-	for t := 1; t <= T; t++ {
-		var dummy, s, t string
-		fmt.Fscan(reader, &dummy, &t, &s)
-		ans := s + t
-		for i := 0; i < len(s); i++ {
-			if t[0] > s[i] {
-				ans = s[:i] + t + s[i:]
-				break
-			}
+	fmt.Fscan(reader, &n, &m, &p)
+	a := make([]int, n)
+	b := make([]int, m)
+	ai, bi := -1, -1
+	for i := 0; i < n; i++ {
+		fmt.Fscan(reader, &a[i])
+		if a[i]%p != 0 && ai == -1 {
+			ai = i
 		}
-		write(f, ans, "\n")
 	}
+	for i := 0; i < m; i++ {
+		fmt.Fscan(reader, &b[i])
+		if b[i]%p != 0 && bi == -1 {
+			bi = i
+		}
+	}
+	write(f, ai+bi, "\n")
 }
