@@ -37,17 +37,12 @@ func main() {
 		var n, k int
 		fmt.Fscan(reader, &n, &k)
 		a := make([][]int, n)
-		//b := make([][]int, n)
 		for i := 0; i < n; i++ {
 			a[i] = make([]int, n)
-			//	b[i] = make([]int, n)
 			for j := 0; j < n; j++ {
 				fmt.Fscan(reader, &a[i][j])
 
 			}
-			// if n == 11 && k == 34 {
-			// 	write(f, a[i], "\n")
-			// }
 		}
 		d := 0
 		r := 0
@@ -58,12 +53,10 @@ func main() {
 				}
 				if a[i][j] != a[n-1-i][n-1-j] {
 					d++
-					//write(f, i, j, "\n")
 				}
 			}
 		}
 		d = d / 2
-		//write(f, d, "\n")
 		if k >= d && n%2 == 1 || k >= d && (k-d)%2 == 0 {
 			write(f, "YES\n")
 		} else {
