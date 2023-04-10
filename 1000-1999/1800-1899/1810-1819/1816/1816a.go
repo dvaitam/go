@@ -61,8 +61,14 @@ func main() {
 			} else if gcd(a-1, b) == 1 {
 				write(f, a-1, b, "\n")
 				write(f, a, b, "\n")
-			} else {
+			} else if gcd(a, b-1) == 1 {
 				write(f, a, b-1, "\n")
+				write(f, a, b, "\n")
+			} else if gcd(a-1, b-1) == 1 {
+				write(f, a-1, b-1, "\n")
+				write(f, a, b, "\n")
+			} else {
+				write(f, a+1, b+1, "\n")
 				write(f, a, b, "\n")
 			}
 
