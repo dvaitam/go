@@ -28,29 +28,24 @@ func max[K Number](a K, b K) K {
 	return b
 }
 
-var found bool
+func check(u int, v int) bool {
 
-func check(u int, v int) {
-	if found {
-		return
-	}
 	if u == v {
-		found = true
-		return
+		return true
 	}
 	if u > v {
-		return
+		return false
 	}
 	for i := 30; i >= 0; i-- {
 		curr := 1 << i
 		if curr > v {
 			continue
 		}
-		if curr|v == curr+v && !found && v-curr >= u {
-			check(u, v-curr)
-			break
+		if curr|v == curr+v && v-curr >= u {
+			return check(u, v-curr)
 		}
 	}
+	return false
 }
 func main() {
 	var T int
@@ -61,9 +56,7 @@ func main() {
 	for t := 1; t <= T; t++ {
 		var u, v int
 		fmt.Fscan(reader, &u, &v)
-		found = false
-		check(u, v)
-		if found {
+		if check(u, v) {
 			write(f, "YES\n")
 		} else {
 			write(f, "NO\n")
