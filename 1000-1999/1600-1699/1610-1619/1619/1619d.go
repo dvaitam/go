@@ -47,24 +47,18 @@ func main() {
 				uniq[p[i][j]] = true
 			}
 		}
-		// if t == 31 {
-		// 	fmt.Println(m, n, p)
-		// }
+
 		keys := make([]int, len(uniq))
 		i := 0
 		for k := range uniq {
 			keys[i] = k
 			i++
 		}
-		sort.Slice(keys, func(i, j int) bool { return keys[i] > keys[j] })
-		start, end := 0, len(keys)-1
-		//write(f, keys, "\n")
-		prev_mid := -1
-		for start <= end {
+		sort.Ints(keys)
+		start, end := 0, len(keys)
+
+		for start < end {
 			mid := (start + end) / 2
-			if prev_mid == mid {
-				break
-			}
 
 			check := keys[mid]
 			counts := make([]int, n)
@@ -85,7 +79,6 @@ func main() {
 				}
 			}
 			if possible {
-				//	write(f, "number of shops", len(shops), "\n")
 				if len(shops) > n-1 {
 					number_of_shops := len(shops)
 					order := make([]int, len(shops))
@@ -121,14 +114,13 @@ func main() {
 					}
 				}
 			}
-			prev_mid = mid
-			//write(f, start, end, "\n")
+
 			if possible {
-				end = mid
-			} else {
 				start = mid + 1
+			} else {
+				end = mid
 			}
 		}
-		write(f, keys[start], "\n")
+		write(f, keys[start-1], "\n")
 	}
 }
