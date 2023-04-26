@@ -33,11 +33,6 @@ func abs[K Number](a K) K {
 	}
 	return a
 }
-
-type Point struct {
-	i, j int
-}
-
 func has_won(s []string) (bool, bool) {
 	first_won, second_won := false, false
 	for i := 0; i < 3; i++ {
@@ -108,19 +103,17 @@ func main() {
 	for i := 0; i < 3; i++ {
 		fmt.Fscan(reader, &s[i])
 	}
-	crosses := make([]Point, 0)
-	noughts := make([]Point, 0)
+	c := 0
+	n := 0
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
 			if s[i][j] == 'X' {
-				crosses = append(crosses, Point{i: i, j: j})
+				c++
 			} else if s[i][j] == '0' {
-				noughts = append(noughts, Point{i: i, j: j})
+				n++
 			}
 		}
 	}
-	c := len(crosses)
-	n := len(noughts)
 	if c-n > 1 || n > c {
 		write(f, "illegal\n")
 	} else {
