@@ -50,10 +50,8 @@ func main() {
 	var x, y int
 	fmt.Fscan(reader, &x, &y)
 	s := make([]string, n)
-	sb := make([][]byte, n)
 	for i := 0; i < n; i++ {
 		fmt.Fscan(reader, &s[i])
-		sb[i] = []byte(s[i])
 	}
 	visited := make([][]bool, n)
 	for i := 0; i < n; i++ {
@@ -61,7 +59,6 @@ func main() {
 	}
 	ans := 1
 	visited[r-1][c-1] = true
-	sb[r-1][c-1] = '+'
 	l := list.New()
 	l.PushBack(Node{r - 1, c - 1, 0, 0})
 	sl := list.New()
@@ -77,33 +74,24 @@ func main() {
 		if front.i > 0 && !visited[front.i-1][front.j] && s[front.i-1][front.j] != '*' {
 			ans++
 			visited[front.i-1][front.j] = true
-			sb[front.i-1][front.j] = '+'
 			l.PushBack(Node{front.i - 1, front.j, front.l, front.r})
 		}
 		if front.i+1 < n && !visited[front.i+1][front.j] && s[front.i+1][front.j] != '*' {
 			ans++
 			visited[front.i+1][front.j] = true
-			sb[front.i+1][front.j] = '+'
 			l.PushBack(Node{front.i + 1, front.j, front.l, front.r})
 		}
 		if front.j > 0 && !visited[front.i][front.j-1] && s[front.i][front.j-1] != '*' && front.l < x {
 			ans++
 			visited[front.i][front.j-1] = true
-			sb[front.i][front.j-1] = '+'
 			sl.PushBack(Node{front.i, front.j - 1, front.l + 1, front.r})
 		}
 		if front.j+1 < m && !visited[front.i][front.j+1] && s[front.i][front.j+1] != '*' && front.r < y {
 			ans++
 			visited[front.i][front.j+1] = true
-			sb[front.i][front.j+1] = '+'
 			sl.PushBack(Node{front.i, front.j + 1, front.l, front.r + 1})
 		}
 
 	}
-	// write(f, "\n")
-	// for i := 0; i < n; i++ {
-	// 	write(f, string(sb[i]), "\n")
-	// }
-	//write(f, visited, "\n")
 	write(f, ans, "\n")
 }
