@@ -33,52 +33,6 @@ func abs[K Number](a K) K {
 	}
 	return a
 }
-
-var ok bool
-var cache [][]int
-
-func check(s string, i int, j int, pick int) bool {
-
-	if cache[i][j] > 0 {
-		return cache[i][j] == 1
-	}
-	if j == i+1 {
-		if s[i] != s[j] {
-			return false
-		} else {
-			return true
-		}
-	} else {
-		if (j-i)%2 == 1 {
-			ans := check(s, i+1, j, i) && check(s, i, j-1, j)
-			if ans {
-				cache[i][j] = 1
-			} else {
-				cache[i][j] = 2
-			}
-			return ans
-		} else {
-			ans := true
-			if s[pick] == s[i] && s[pick] == s[j] {
-				ans = check(s, i+1, j, i) || check(s, i, j-1, j)
-			} else if s[pick] == s[i] {
-				ans = check(s, i+1, j, i)
-			} else if s[pick] == s[j] {
-				ans = check(s, i, j-1, j)
-			} else {
-				ans = false
-			}
-			if ans {
-				cache[i][j] = 1
-			} else {
-				//fmt.Println(i, j, false)
-				cache[i][j] = 2
-			}
-			return ans
-		}
-	}
-
-}
 func main() {
 	var T int
 	reader := bufio.NewReader(os.Stdin)
@@ -88,13 +42,56 @@ func main() {
 	for t := 1; t <= T; t++ {
 		var s string
 		fmt.Fscan(reader, &s)
-		cache = make([][]int, len(s))
-		for i := 0; i < len(s); i++ {
-			cache[i] = make([]int, len(s))
+		start := make([]bool, len(s))
+		front := make([]bool, len(s))
+		back := make([]bool, len(s))
+		for i := 0; i < len(s)-1; i++ {
+			if s[i] == s[i+1] {
+				front[i] = true
+			}
 		}
-		ok = true
+		for i := 1; i < len(s); i++ {
+			if s[i] == s[i-1] {
+				back[i] = true
+			}
+		}
+		l := 2
+		for len(start) > 1 {
+			if l%2 == 0 {
+				start = make([]bool, len(s)-l+1)
+				for i := 0; i < len(s)-l+1; i++ {
+					start[i] = front[i] && back[i+1]
+				}
+			} else {
+				front = make([]bool, len(s))
+				back = make([]bool, len(s))
+				for i := 0; i < len(s)-l; i++ {
+					if s[i] == s[i+l] && s[i+l] == s[i+l-1] {
+						front[i] = start[i] || start[i+1]
+					} else if s[i] == s[i+l] {
+						front[i] = start[i+1]
+					} else if s[i+l] == s[i+l-1] {
+						front[i] = start[i]
+					} else {
+						front[i] = false
+					}
+				}
+				for i := 1; i < len(s)-l+1; i++ {
+					if s[i] == s[i-1] && s[i-1] == s[i+l-1] {
+						back[i] = start[i+1] || start[i]
+					} else if s[i] == s[i-1] {
+						back[i] = start[i+1]
+					} else if s[i-1] == s[i+l-1] {
+						back[i] = start[i]
+					} else {
+						back[i] = false
+					}
+				}
+			}
+			l++
+		}
 
-		if check(s, 0, len(s)-1, 0) {
+		if start[0] {
 			write(f, "Draw\n")
 		} else {
 			write(f, "Alice\n")
