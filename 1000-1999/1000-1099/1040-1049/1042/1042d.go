@@ -41,13 +41,22 @@ func bisect_left(a []int64, x int64) int {
 	}
 	return lo
 }
-func insert_element(a []int64, x int64) []int64 {
-	i := bisect_left(a, x)
-	a = append(a, 0)
-	copy(a[i+1:], a[i:])
-	a[i] = x
-	return a
+func lb(x int) int {
+	return x & (-x)
 }
+func mod(bit []int, x int) {
+	for i := x; i < len(bit); i += lb(i) {
+		bit[i]++
+	}
+}
+func query(bit []int, x int) int {
+	r := 0
+	for i := x; i > 0; i -= lb(i) {
+		r += bit[i]
+	}
+	return r
+}
+
 func main() {
 	var n int
 	var t int64
@@ -56,35 +65,34 @@ func main() {
 	defer f.Flush()
 	fmt.Fscan(reader, &n, &t)
 	a := make([]int64, n)
-	c := make([]int64, n)
+	c := make([]int64, n+1)
+	uniq := map[int64]bool{}
+	li := make([]int64, 0)
+	bit := make([]int, 402020)
 	for i := 0; i < n; i++ {
 		fmt.Fscan(reader, &a[i])
-		if i == 0 {
-			c[i] = a[i]
-		} else {
-			c[i] = c[i-1] + a[i]
+		c[i+1] = c[i] + a[i]
+		if !uniq[c[i+1]] {
+			li = append(li, c[i+1])
+			uniq[c[i+1]] = true
+		}
+		if !uniq[c[i+1]-t] {
+			li = append(li, c[i+1]-t)
+			uniq[c[i+1]-t] = true
 		}
 	}
-	ans := int64(0)
-	sort.Slice(c, func(i, j int) bool { return c[i] < c[j] })
-	//write(f, c, "\n")
-	ans += int64(bisect_left(c, t))
-	//write(f, "ans ", ans, "\n")
-	//sorted_array := make([]int64, 0)
-	cu := int64(0)
-	for i := 0; i < n; i++ {
-		cu += a[i]
-		to := bisect_left(c, cu)
-		copy(c[to:], c[to+1:])
-		c = c[:len(c)-1]
-		//	sorted_array = insert_element(sorted_array, cu)
-		//	write(f, sorted_array, "\n")
-		t += a[i]
-		ans += int64(bisect_left(c, t))
-		//write(f, "ans after 1 ", ans, "\n")
-		//ans -= int64(bisect_left(sorted_array, t))
-		//write(f, "ans after 2 ", ans, "\n")
+	if uniq[0] {
+		li = append(li, 0)
 	}
+	sort.Slice(li, func(i, j int) bool { return li[i] < li[j] })
+	ans := int64(0)
+	for i := 1; i <= n; i++ {
+		lb := bisect_left(li, c[i-1]) + 1
+		mod(bit, lb)
+		llb := bisect_left(li, c[i]-t) + 1
+		ans += int64(i - query(bit, llb))
+	}
+
 	write(f, ans, "\n")
 
 }
