@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 )
 
 func write(f *bufio.Writer, a ...interface{}) {
@@ -34,100 +35,6 @@ func abs[K Number](a K) K {
 	return a
 }
 
-var swaps int
-
-func quicksort(a []int, lo int, hi int) {
-	if lo >= hi || lo < 0 {
-		return
-	}
-	p := partition(a, lo, hi)
-	quicksort(a, lo, p-1)
-	quicksort(a, p+1, hi)
-}
-func partition(a []int, lo int, hi int) int {
-	pivot := a[hi]
-	i := lo - 1
-	for j := lo; j < hi; j++ {
-		if a[j] < pivot {
-			i++
-			a[i], a[j] = a[j], a[i]
-			swaps++
-		}
-	}
-	i++
-	a[i], a[hi] = a[hi], a[i]
-	swaps++
-	return i
-}
-func inverts(a []int) int {
-	ans := 0
-	for i := 0; i < len(a); i++ {
-		for j := i + 1; j < len(a); j++ {
-			if a[i] > a[j] {
-				ans++
-			}
-		}
-	}
-	return ans
-}
-
-var steps int
-
-func backtrack(a []int, count int, wrong_positions map[int]bool) {
-	if count > steps {
-		return
-	}
-	if len(wrong_positions) == 0 {
-		steps = min(steps, count+1)
-		return
-	}
-	if len(wrong_positions) == 2 {
-		keys := make([]int, 0)
-		for k := range wrong_positions {
-			keys = append(keys, k)
-		}
-		if abs(keys[0]-keys[1]) == 1 {
-			steps = min(steps, count)
-			return
-		}
-	}
-	for k := range wrong_positions {
-
-		si, sj := k, a[k]-1
-
-		delete(wrong_positions, si)
-
-		a[si], a[sj] = a[sj], a[si]
-
-		backtrack(a, count+1, wrong_positions)
-		wrong_positions[si] = true
-		a[si], a[sj] = a[sj], a[si]
-
-		if wrong_positions[sj-1] {
-			si, sj := k, a[k]-2
-
-			delete(wrong_positions, si)
-
-			a[si], a[sj] = a[sj], a[si]
-
-			backtrack(a, count+1, wrong_positions)
-			wrong_positions[si] = true
-			a[si], a[sj] = a[sj], a[si]
-		}
-		if wrong_positions[sj+1] {
-			si, sj := k, a[k]
-
-			delete(wrong_positions, si)
-
-			a[si], a[sj] = a[sj], a[si]
-
-			backtrack(a, count+1, wrong_positions)
-			wrong_positions[si] = true
-			a[si], a[sj] = a[sj], a[si]
-		}
-	}
-
-}
 func main() {
 	var T int
 	reader := bufio.NewReader(os.Stdin)
@@ -139,18 +46,69 @@ func main() {
 		var n int
 		fmt.Fscan(reader, &n)
 		p := make([]int, n)
-		m := map[int]int{}
-		wrong_positions := map[int]bool{}
+
 		for i := 0; i < n; i++ {
 			fmt.Fscan(reader, &p[i])
-			m[p[i]] = i + 1
+		}
+		adj := make([][]int, n+1)
+		for i := 0; i < n; i++ {
 			if p[i] != i+1 {
-				wrong_positions[i] = true
+				adj[i+1] = append(adj[i+1], p[i])
 			}
 		}
-		steps = n
-		backtrack(p, 0, wrong_positions)
-		write(f, steps, "\n")
+		nodes := make([]int, 0)
+		for i := 1; i <= n; i++ {
+			if len(adj[i]) > 0 {
+				nodes = append(nodes, i)
+			}
+		}
+		visited := map[int]bool{}
+		ans := 0
+		present := false
+		for i := 0; i < len(nodes); i++ {
+			if visited[nodes[i]] {
+				continue
+			}
+			group := make([]int, 1)
+			visited[nodes[i]] = true
+			stack := make([]int, 1)
+			group[0] = nodes[i]
+			stack[0] = nodes[i]
+			for len(stack) > 0 {
+				ll := len(stack)
+				last := stack[ll-1]
+				stack = stack[:ll-1]
 
+				for _, v := range adj[last] {
+					if visited[v] {
+						continue
+					}
+					stack = append(stack, v)
+					group = append(group, v)
+					visited[v] = true
+				}
+			}
+			//write(f, group, "\n")
+			if present {
+				ans += len(group) - 1
+			} else {
+				sort.Ints(group)
+				for j := 1; j < len(group); j++ {
+					if group[j] == group[j-1]+1 {
+						present = true
+						break
+					}
+				}
+				if present {
+					ans += len(group) - 2
+				} else {
+					ans += len(group) - 1
+				}
+			}
+		}
+		if !present {
+			ans++
+		}
+		write(f, ans, "\n")
 	}
 }
