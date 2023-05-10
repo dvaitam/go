@@ -29,17 +29,9 @@ func max[K Number](a K, b K) K {
 	return b
 }
 func bisect_left(a []int64, x int64) int {
-	lo := 0
-	hi := len(a)
-	for lo < hi {
-		mid := (lo + hi) / 2
-		if a[mid] < x {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	return lo
+	return sort.Search(len(a), func(i int) bool {
+		return a[i] >= x
+	})
 }
 func lb(x int) int {
 	return x & (-x)
