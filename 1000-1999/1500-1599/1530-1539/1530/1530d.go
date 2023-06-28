@@ -43,7 +43,7 @@ func main() {
 		var n int
 		fmt.Fscan(reader, &n)
 		a := make([]int, n)
-		counts := make([]int, n+1)
+		counts := map[int]int{}
 		b := make([]bool, n)
 		for i := 0; i < n; i++ {
 			fmt.Fscan(reader, &a[i])
@@ -54,45 +54,62 @@ func main() {
 		mg := map[int]bool{}
 		for i := 0; i < n; i++ {
 			if !b[i] {
-				g = append(g, i+1)
-				mg[i+1] = true
+				if counts[a[i]] > 1 {
+					g = append(g, i+1)
+					mg[i+1] = true
+				}
+
 			}
 		}
-		//write(f, g, "\n")
-		curr := 0
-		bs := make([]bool, n)
+		//write(f, g, counts, "\n")
+		curr := 1
 		ans := make([]int, n)
-		fill := 0
-		for i := 0; i < n; i++ {
-			if !bs[a[i]-1] {
-				if counts[a[i]] == 1 || a[a[i]-1] != i+1 {
-					ans[i] = a[i]
-					bs[a[i]-1] = true
-					fill++
-				}
-
-			}
-		}
-		//write(f, ans, "\n")
-		for i := 0; i < n; i++ {
-			if ans[i] == 0 {
-				if mg[i+1] {
-					if g[len(g)-1] == i+1 {
-						g[len(g)-1], g[len(g)-2] = g[len(g)-2], g[len(g)-1]
+		if len(g) != 1 {
+			for i := 0; i < n; i++ {
+				if counts[a[i]] > 1 {
+					if mg[i+1] {
+						ans[i] = g[curr%len(g)]
+						curr++
 					}
-					ans[i] = g[len(g)-1]
-					g = g[:len(g)-1]
+				}
+			}
+			for i := 0; i < n; i++ {
+				if counts[a[i]] == 1 {
+					ans[i] = a[i]
+				}
+			}
+			gifted := map[int]bool{}
+			for i := 0; i < n; i++ {
+				if ans[i] != 0 {
+					gifted[ans[i]] = true
+				}
+			}
+			not_gifted := make([]int, 0)
+			for i := 0; i < n; i++ {
+				if !gifted[i+1] {
+					not_gifted = append(not_gifted, i+1)
+				}
+			}
+			curr := 0
+			for i := 0; i < n; i++ {
+				if ans[i] == 0 {
+					ans[i] = not_gifted[curr]
+					curr++
 				}
 			}
 
-		}
-		for i := 0; i < n; i++ {
-			if ans[i] == 0 {
-				ans[i] = g[curr]
-				curr++
+			write(f, len(counts), "\n")
+		} else {
+			for i := 0; i < n; i++ {
+				if counts[a[i]] > 1 && g[0] != i+1 {
+					ans[i] = g[0]
+				} else {
+					ans[i] = a[i]
+				}
 			}
+			write(f, len(counts), "\n")
 		}
-		write(f, fill, "\n")
+
 		for i := 0; i < n; i++ {
 			write(f, ans[i], " ")
 		}
