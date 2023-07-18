@@ -50,27 +50,51 @@ func main() {
 		for i := 0; i < n; i++ {
 			fmt.Fscan(reader, &b[i])
 		}
-		diff := a[0] - b[0]
+		// if T == 10000 {
+		// 	if t == 7 {
+		// 		write(f, a, "\n", b, "\n")
+		// 	}
+		// }
+		diff := (a[0] - b[0])
 		for i := 0; i < n; i++ {
 			a[i] -= diff
 		}
-		write(f, a, b, "\n")
+		for i := 0; i < n; i++ {
+			b[i] += (w - h)
+		}
+		//	write(f, a, "\n", b, "\n")
+		max_delta := (b[0] - h) - (a[0] - w)
+		delta := 0
+		//write(f, max_delta, "\n")
+
 		ok := true
 		for i := 1; i < n; i++ {
-			if 2*b[i]+h > 2*a[i]+w {
-				if b[i]+h > a[i]+w {
-					write(f, "1 failing", i, "\n")
-					ok = false
-					break
-				}
-			} else if 2*b[i]-h < 2*a[i]-w {
-				if a[i]-w > b[i]-h {
-					write(f, "2  failing", i, "\n")
+			// if i == 2 {
+			// 	write(f, a[i], b[i], delta, "\n")
+			// }
+			if b[i]-h-delta < a[i]-w {
+				ok = false
+				break
+			}
+			//write(f, delta, "\n")
+			if b[i]+h-delta > a[i]+w {
+				delta += b[i] + h - delta - (a[i] + w)
+				if delta > max_delta {
 					ok = false
 					break
 				}
 			}
+			max_delta = min(max_delta, b[i]-h-(a[i]-w))
+			//write(f, delta, "\n")
 		}
+		// for i := 0; i < n; i++ {
+		// 	write(f, a[i], " ")
+		// }
+		// write(f, "\n")
+		// for i := 0; i < n; i++ {
+		// 	write(f, b[i]-delta, " ")
+		// }
+		// write(f, "\n")
 		if ok {
 			write(f, "YES\n")
 		} else {
