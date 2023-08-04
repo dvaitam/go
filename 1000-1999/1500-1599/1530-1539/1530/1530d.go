@@ -42,77 +42,60 @@ func main() {
 	for t := 1; t <= T; t++ {
 		var n int
 		fmt.Fscan(reader, &n)
-		a := make([]int, n)
+		a := make([]int, n+1)
 		counts := map[int]int{}
 		b := make([]bool, n)
-		for i := 0; i < n; i++ {
+		for i := 1; i <= n; i++ {
 			fmt.Fscan(reader, &a[i])
 			counts[a[i]]++
 			b[a[i]-1] = true
 		}
-		g := make([]int, 0)
-		mg := map[int]bool{}
+		not_gifted := make([]int, 0)
 		for i := 0; i < n; i++ {
 			if !b[i] {
-				if counts[a[i]] > 1 {
-					g = append(g, i+1)
-					mg[i+1] = true
-				}
-
+				not_gifted = append(not_gifted, i+1)
 			}
 		}
-		//write(f, g, counts, "\n")
-		curr := 1
-		ans := make([]int, n)
-		if len(g) != 1 {
-			for i := 0; i < n; i++ {
-				if counts[a[i]] > 1 {
-					if mg[i+1] {
-						ans[i] = g[curr%len(g)]
-						curr++
+		//write(f, not_gifted, "\n")
+		j := 0
+		ans := make([]int, n+1)
+		last_user, last_user_gift := -1, -1
+		for i := 1; i <= n; i++ {
+			if counts[a[i]] > 1 {
+				if i == not_gifted[j] {
+					if j+1 < len(not_gifted) {
+						not_gifted[j], not_gifted[j+1] = not_gifted[j+1], not_gifted[j]
+						ans[i] = not_gifted[j]
+						last_user, last_user_gift = i, not_gifted[j]
+						counts[a[i]]--
+						j++
+					} else {
+						if last_user == -1 {
+							ans[i] = a[i]
+							//write(f, "something wrong", a, "\n")
+						} else {
+							ans[i] = last_user_gift
+							ans[last_user] = not_gifted[j]
+							counts[a[i]]--
+							j++
+						}
+
 					}
-				}
-			}
-			for i := 0; i < n; i++ {
-				if counts[a[i]] == 1 {
-					ans[i] = a[i]
-				}
-			}
-			gifted := map[int]bool{}
-			for i := 0; i < n; i++ {
-				if ans[i] != 0 {
-					gifted[ans[i]] = true
-				}
-			}
-			not_gifted := make([]int, 0)
-			for i := 0; i < n; i++ {
-				if !gifted[i+1] {
-					not_gifted = append(not_gifted, i+1)
-				}
-			}
-			curr := 0
-			for i := 0; i < n; i++ {
-				if ans[i] == 0 {
-					ans[i] = not_gifted[curr]
-					curr++
-				}
-			}
-
-			write(f, len(counts), "\n")
-		} else {
-			for i := 0; i < n; i++ {
-				if counts[a[i]] > 1 && g[0] != i+1 {
-					ans[i] = g[0]
 				} else {
-					ans[i] = a[i]
+					ans[i] = not_gifted[j]
+					last_user, last_user_gift = i, not_gifted[j]
+					counts[a[i]]--
+					j++
 				}
+			} else {
+				ans[i] = a[i]
 			}
-			write(f, len(counts), "\n")
 		}
-
-		for i := 0; i < n; i++ {
+		write(f, n-len(not_gifted), "\n")
+		for i := 1; i <= n; i++ {
 			write(f, ans[i], " ")
 		}
 		write(f, "\n")
+
 	}
 }

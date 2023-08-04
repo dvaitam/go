@@ -39,42 +39,32 @@ func main() {
 	f := bufio.NewWriter(os.Stdout)
 	defer f.Flush()
 	fmt.Fscan(reader, &n)
-	var s string
-	fmt.Fscan(reader, &s)
 	a := make([]int, n)
-	b := make([]int, n)
+	m := map[int]int{}
 	for i := 0; i < n; i++ {
-		fmt.Fscan(reader, &a[i], &b[i])
+		fmt.Fscan(reader, &a[i])
+		m[a[i]]++
+	}
+	var mn int
+	fmt.Fscan(reader, &mn)
+	b := make([]int, mn)
+	c := make([]int, mn)
+	for i := 0; i < mn; i++ {
+		fmt.Fscan(reader, &b[i])
+	}
+	for i := 0; i < mn; i++ {
+		fmt.Fscan(reader, &c[i])
 	}
 	ans := 0
-	o := make([][]bool, n)
-	m := 1200
-	for i := 0; i < n; i++ {
-		o[i] = make([]bool, m)
-	}
-	for i := 0; i < n; i++ {
-		if s[i] == '1' {
-			o[i][0] = true
-		}
-		for j := 1; j < m; j++ {
-			if j < b[i] {
-				o[i][j] = o[i][j-1]
-			} else if (b[i]-j)%a[i] == 0 {
-				o[i][j] = !o[i][j-1]
-			} else {
-				o[i][j] = o[i][j-1]
+	for i := 0; i < mn; i++ {
+		if m[b[i]] > m[b[ans]] {
+			ans = i
+		} else if m[b[i]] == m[b[ans]] {
+			if m[c[i]] > m[c[ans]] {
+				ans = i
 			}
 		}
 	}
-	for j := 0; j < m; j++ {
-		count := 0
-		for i := 0; i < n; i++ {
-			if o[i][j] {
-				count++
-			}
-		}
-		ans = max(ans, count)
-	}
+	write(f, ans+1, "\n")
 
-	write(f, ans, "\n")
 }
