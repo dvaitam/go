@@ -51,7 +51,7 @@ func get_coff(n int, a int, b int) (int, int) {
 			return -1, -1
 		}
 		if (n-k*b)%a == 0 {
-			fmt.Println("yes ", k, a, b)
+			//	fmt.Println("yes ", k, a, b)
 			return (n - k*b) / a, k
 		}
 	}
@@ -60,23 +60,16 @@ func get_coff(n int, a int, b int) (int, int) {
 }
 func is_valid(n int, a int, b int) bool {
 	if a == 1 {
-		if n%b == 1 {
+		return b == 1 || n%b == 1
+	}
+	curr := 1
+	for curr <= n {
+		if (n-curr)%b == 0 {
 			return true
-		} else {
-			return false
 		}
+		curr = curr * a
 	}
-	if b == 1 {
-		return true
-	}
-	if n%b == 1 || n == a {
-		return true
-	}
-	c1, c2 := get_coff(n, a, b)
-	if c1 == -1 || c2 == -1 {
-		return false
-	}
-	return is_valid(c1, a, b)
+	return false
 }
 
 func main() {
@@ -88,10 +81,17 @@ func main() {
 	for t := 1; t <= T; t++ {
 		var n, a, b int
 		fmt.Fscan(reader, &n, &a, &b)
+		// if T == 100000 {
+		// 	if t == 1779 {
+		// 		write(f, n, a, b, "\n")
+		// 	}
+		// } else {
 		if is_valid(n, a, b) {
 			write(f, "Yes\n")
 		} else {
 			write(f, "No\n")
 		}
+		//}
+
 	}
 }
